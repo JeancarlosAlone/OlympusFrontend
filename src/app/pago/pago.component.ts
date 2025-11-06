@@ -14,7 +14,7 @@ declare global {
   styleUrls: ['./pago.component.css']
 })
 export class PagoComponent implements OnInit, AfterViewInit {
-  // ===================== VARIABLES PRINCIPALES =====================
+  // ===================== VARIABLES =====================
   cliente: any = null;
   habitacion: any = null;
   serviciosSeleccionados: any[] = [];
@@ -30,13 +30,13 @@ export class PagoComponent implements OnInit, AfterViewInit {
   precioPorNoche: number = 0;
 
   clienteIdentifier: string = '';
-  fechaFiltro: string = '';
   correoValido: boolean = false;
 
+  clientesEncontrados: any[] = [];
 
-  constructor(private ngZone: NgZone) { }
+  constructor(private ngZone: NgZone) {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     this.intentarRenderizarBoton();
@@ -45,60 +45,109 @@ export class PagoComponent implements OnInit, AfterViewInit {
   // ===================== BUSCAR HUÉSPED =====================
   async buscarCliente() {
     try {
-      const query: any = {};
-      if (this.clienteIdentifier) query.nombre = this.clienteIdentifier;
-      if (this.fechaFiltro) query.fecha = this.fechaFiltro;
+      const texto = this.clienteIdentifier.trim().toLowerCase();
+      if (!texto) {
+        this.cliente = null;
+        this.habitacion = null;
+        this.serviciosSeleccionados = [];
+        this.total = 0;
+        this.mensaje = 'Ingrese un nombre, apellido o ID de habitación.';
+        this.clientesEncontrados = [];
+        return;
+      }
 
-      const url = `http://localhost:8080/api/huespedes/pendientes?${new URLSearchParams(query)}`;
+      // 🔹 Obtener todos los huéspedes pendientes
+      const url = `http://localhost:8080/api/huespedes/pendientes`;
       const res = await fetch(url);
       const data = await res.json();
 
       if (!data || data.length === 0) {
-        this.mensaje = 'No se encontraron huéspedes pendientes con esos filtros.';
+        this.mensaje = 'No se encontraron huéspedes pendientes.';
+        this.clientesEncontrados = [];
         this.cliente = null;
-        this.total = 0;
         return;
       }
 
-      const huesped = data[0];
-      this.cliente = huesped;
-      this.habitacion = huesped.habitacionAsignada;
-      this.serviciosSeleccionados = huesped.servicios || [];
+      // 🔹 Filtrar manualmente desde el front
+      const filtrados = data.filter((c: any) => {
+        const nombre = c.nameHuesped?.toLowerCase() || '';
+        const apellido = c.apellidoHuesped?.toLowerCase() || '';
+        const idHabitacion = c.habitacionAsignada?.id_Rooms?.toString() || '';
+        return (
+          nombre.includes(texto) ||
+          apellido.includes(texto) ||
+          idHabitacion.includes(texto)
+        );
+      });
 
-      // 📅 Calcular noches y total
-      const fechaInicio = new Date(huesped.fechaRegistro);
-      const fechaFin = new Date(huesped.fechaSalida);
-      this.noches = Math.max(1, Math.ceil((+fechaFin - +fechaInicio) / (1000 * 60 * 60 * 24)));
+      if (filtrados.length === 0) {
+        this.mensaje = 'No se encontraron coincidencias con su búsqueda.';
+        this.clientesEncontrados = [];
+        this.cliente = null;
+        return;
+      }
 
-      this.precioPorNoche = Number(this.habitacion?.precio) || 0;
-      const totalServicios = this.serviciosSeleccionados.reduce(
-        (acc: number, s: any) => acc + Number(s.precioFinal || s.precio || 0),
-        0
-      );
+      // 🔹 Mostrar lista si hay más de uno
+      if (filtrados.length > 1) {
+        this.clientesEncontrados = filtrados;
+        this.mensaje = '';
+        return;
+      }
 
-      this.cliente.totalServicios = totalServicios;
-      this.total = (this.precioPorNoche * this.noches) + totalServicios;
-      this.mensaje = '';
+      // 🔹 Cargar directamente si solo hay un resultado
+      this.cargarDatosHuesped(filtrados[0]);
     } catch (err) {
       console.error('Error al buscar cliente pendiente:', err);
       this.mensaje = 'Ocurrió un error al buscar el cliente.';
     }
   }
-  verificarCorreo() {
-  const patronCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  this.correoValido = patronCorreo.test(this.emailCliente.trim());
 
-  // 🔄 Si el correo se valida correctamente, renderiza el botón
-  if (this.correoValido) {
-    setTimeout(() => this.renderizarBotonPaypal(), 300);
+  mostrarListaClientes(lista: any[]) {
+    this.clientesEncontrados = lista;
+    this.mensaje = '';
   }
-}
+
+  seleccionarCliente(huesped: any) {
+    this.clientesEncontrados = [];
+    this.cargarDatosHuesped(huesped);
+    this.clienteIdentifier = `${huesped.nameHuesped} ${huesped.apellidoHuesped}`;
+  }
+
+  private cargarDatosHuesped(huesped: any) {
+    this.cliente = huesped;
+    this.habitacion = huesped.habitacionAsignada;
+    this.serviciosSeleccionados = huesped.servicios || [];
+
+    const fechaInicio = new Date(huesped.fechaRegistro);
+    const fechaFin = new Date(huesped.fechaSalida);
+    this.noches = Math.max(1, Math.ceil((+fechaFin - +fechaInicio) / (1000 * 60 * 60 * 24)));
+
+    this.precioPorNoche = Number(this.habitacion?.precio) || 0;
+    const totalServicios = this.serviciosSeleccionados.reduce(
+      (acc: number, s: any) => acc + Number(s.precioFinal || s.precio || 0),
+      0
+    );
+
+    this.cliente.totalServicios = totalServicios;
+    this.total = (this.precioPorNoche * this.noches) + totalServicios;
+    this.mensaje = '';
+  }
+
+  // ===================== VALIDAR CORREO =====================
+  verificarCorreo() {
+    const patronCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    this.correoValido = patronCorreo.test(this.emailCliente.trim());
+
+    if (this.correoValido) {
+      setTimeout(() => this.renderizarBotonPaypal(), 300);
+    }
+  }
 
   // ===================== MODAL =====================
   private mostrarModalConMensaje(mensaje: string) {
     this.mensajeModal = mensaje;
     this.mostrarModal = true;
-    setTimeout(() => (this.mostrarModal = false), 1200);
+    setTimeout(() => (this.mostrarModal = false), 1500);
   }
 
   // ===================== PAYPAL =====================
@@ -115,10 +164,11 @@ export class PagoComponent implements OnInit, AfterViewInit {
 
   private renderizarBotonPaypal() {
     const paypal = (window as any).paypal;
+    if (!paypal) return;
+
     paypal.Buttons({
       style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
 
-      // Crear orden con validaciones
       createOrder: async () => {
         if (!this.emailCliente || !this.emailCliente.trim()) {
           this.mensaje = 'Debe ingresar un correo válido antes de pagar.';
@@ -140,7 +190,6 @@ export class PagoComponent implements OnInit, AfterViewInit {
         return data?.data?.id;
       },
 
-      // Capturar y generar factura
       onApprove: async (data: any) => {
         try {
           this.mensaje = 'Procesando pago...';
@@ -157,37 +206,31 @@ export class PagoComponent implements OnInit, AfterViewInit {
           const capJson = await cap.json();
           if (!capJson) throw new Error('No se pudo capturar la orden');
 
-          // Generar factura usando el correo manual
-          try {
-            const fac = await fetch('http://localhost:8080/api/facturas/generar', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                cliente: {
-                  nombre: this.cliente.nameHuesped,
-                  apellido: this.cliente.apellidoHuesped,
-                  telefono: this.cliente.telefono,
-                  email: this.emailCliente.trim(), // 👈 correo manual
-                },
-                habitacion: this.habitacion,
-                serviciosSeleccionados: this.serviciosSeleccionados,
-                total: this.total,
-                pago: 'PayPal'
-              })
-            });
+          // Generar factura
+          const fac = await fetch('http://localhost:8080/api/facturas/generar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              cliente: {
+                nombre: this.cliente.nameHuesped,
+                apellido: this.cliente.apellidoHuesped,
+                telefono: this.cliente.telefono,
+                email: this.emailCliente.trim(),
+              },
+              habitacion: this.habitacion,
+              serviciosSeleccionados: this.serviciosSeleccionados,
+              total: this.total,
+              pago: 'PayPal'
+            })
+          });
 
-            const facJson = await fac.json();
-            this.mostrarModalConMensaje(
-              facJson?.ok
-                ? `✅ Factura enviada al correo ${this.emailCliente.trim()}`
-                : 'Pago realizado, pero hubo un problema al generar/enviar la factura.'
-            );
-          } catch (err) {
-            console.error('Error al generar factura:', err);
-            this.mostrarModalConMensaje('Pago realizado, pero hubo un problema al generar la factura.');
-          }
+          const facJson = await fac.json();
+          this.mostrarModalConMensaje(
+            facJson?.ok
+              ? `✅ Factura enviada al correo ${this.emailCliente.trim()}`
+              : 'Pago realizado, pero hubo un problema al generar/enviar la factura.'
+          );
 
-          // Redirección final
           setTimeout(() => {
             this.ngZone.run(() => {
               window.location.href = 'http://localhost:4200/SACH/habitaciones';

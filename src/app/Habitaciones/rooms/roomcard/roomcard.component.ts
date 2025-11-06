@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Room, TypesRooms, TypesRoomsStatus } from '../../rooms.model';
+import { RoomsService } from '../../rooms.service'; // 🔹 Importar el servicio
 
 @Component({
   selector: 'app-roomcard',
@@ -17,41 +18,67 @@ export class RoomcardComponent {
   @Output() editarHabitacion = new EventEmitter<Room>();
   @Output() eliminarHabitacion = new EventEmitter<number>();
 
-  constructor(private router: Router) {}
+  mostrarModalOcupada: boolean = false;
+  mostrarModalNoEliminable: boolean = false;
+  mensajeModal: string = ''; // 🔹 Texto dinámico del modal
+
+  constructor(private router: Router, private roomsService: RoomsService) {}
 
   /** Redirección al detalle */
   verHabitacion(id: number): void {
+    if (this.room.estado === 'ocupada') {
+      this.mostrarModalOcupada = true;
+      return;
+    }
     this.router.navigate(['/SACH/RegistroHuesped', id]);
   }
 
-  /** Clase visual del estado */
+  cerrarModalOcupada(): void {
+    this.mostrarModalOcupada = false;
+    this.mostrarModalNoEliminable = false;
+  }
+
+  /** Intentar eliminar habitación */
+  eliminarRoom(id: number): void {
+    if (this.room.estado === 'ocupada') {
+      this.mensajeModal = 'No se puede eliminar esta habitación porque actualmente está ocupada.';
+      this.mostrarModalNoEliminable = true;
+      return;
+    }
+
+    this.roomsService.verificarHistoricoReservas(id).subscribe({
+      next: (tieneHistorial) => {
+        if (tieneHistorial) {
+          this.mensajeModal = 'No se puede eliminar esta habitación porque ha tenido reservas previas en el historial.';
+          this.mostrarModalNoEliminable = true;
+        } else {
+          if (confirm('¿Seguro que deseas eliminar esta habitación?')) {
+            this.eliminarHabitacion.emit(id);
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Error al verificar historial de reservas:', err);
+        this.mensajeModal = 'No se puede eliminar habitaciòn debido a historial històrico de registros';
+        this.mostrarModalNoEliminable = true;
+      }
+    });
+  }
+
   getEstadoClass(estado: TypesRoomsStatus): string {
     return `estado-${estado}`;
   }
 
-  /** Traducción del tipo */
   getTipoHabitacion(tipo: TypesRooms): string {
     switch (tipo) {
-      case 'normal':
-        return 'Habitación Normal';
-      case 'doble':
-        return 'Habitación Doble';
-      case 'plus':
-        return 'Habitación Plus';
-      default:
-        return tipo;
+      case 'normal': return 'Habitación Normal';
+      case 'doble': return 'Habitación Doble';
+      case 'plus': return 'Habitación Plus';
+      default: return tipo;
     }
   }
 
-  /** Emitir evento para editar */
   editarRoom(room: Room): void {
     this.editarHabitacion.emit(room);
-  }
-
-  /** Emitir evento para eliminar */
-  eliminarRoom(id: number): void {
-    if (confirm('¿Seguro que deseas eliminar esta habitación?')) {
-      this.eliminarHabitacion.emit(id);
-    }
   }
 }

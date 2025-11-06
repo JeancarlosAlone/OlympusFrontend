@@ -5,15 +5,21 @@
   <div class="busqueda">
     <input
       type="text"
-      placeholder="Buscar cliente por nombre"
+      placeholder="Buscar por nombre, apellido o ID de habitación"
       [(ngModel)]="clienteIdentifier"
+      (input)="buscarCliente()"
     />
-    <input
-      type="date"
-      [(ngModel)]="fechaFiltro"
-      title="Filtrar por fecha de ingreso o salida"
-    />
-    <button (click)="buscarCliente()">Buscar</button>
+  </div>
+
+  <!-- ===================== LISTA DE RESULTADOS ===================== -->
+  <div class="resultados" *ngIf="clientesEncontrados.length > 0">
+    <p>Seleccione el cliente correcto:</p>
+    <ul>
+      <li *ngFor="let c of clientesEncontrados" (click)="seleccionarCliente(c)">
+        {{ c.nameHuesped }} {{ c.apellidoHuesped }}
+        <small>— Habitación #{{ c.habitacionAsignada?.id_Rooms }}</small>
+      </li>
+    </ul>
   </div>
 
   <hr />
@@ -24,23 +30,16 @@
       <h3>Resumen de la habitación</h3>
       <p><strong>ID:</strong> {{ habitacion?.id_Rooms }}</p>
       <p><strong>Tipo:</strong> {{ habitacion?.habitacion | titlecase }}</p>
-      <p><strong>Nivel:</strong> {{ habitacion?.nivel }}</p>
+      <p><strong>Nivel:</strong> {{ habitacion?.nivel || cliente?.habitacionAsignada?.nivel || '—' }}</p>
       <p><strong>Precio por noche:</strong> Q {{ precioPorNoche | number: '1.2-2' }}</p>
 
       <h3>Servicios adicionales</h3>
       <div *ngIf="serviciosSeleccionados.length > 0; else sinServicios">
         <ul>
           <li *ngFor="let servicio of serviciosSeleccionados">
-            {{ servicio.nombre }} —
-            <span *ngIf="servicio.precioFinal !== undefined">
-              Q {{ servicio.precioFinal }}
-              <small *ngIf="servicio.descuento && servicio.descuento > 0">
-                ({{ servicio.descuento }}% desc.)
-              </small>
-            </span>
-            <span *ngIf="servicio.precioFinal === undefined">
-              Q {{ servicio.precio }}
-            </span>
+            {{ servicio.nombre }} — 
+            Q {{ servicio.precioFinal || servicio.precio }}
+            <small *ngIf="servicio.descuento">({{ servicio.descuento }}%)</small>
           </li>
         </ul>
         <p><strong>Total servicios:</strong> Q {{ cliente?.totalServicios || 0 | number: '1.2-2' }}</p>
@@ -59,7 +58,6 @@
 
       <hr />
 
-      <!-- ===================== CAMPO DE CORREO OBLIGATORIO ===================== -->
       <div class="correo-container">
         <label for="correo">Correo electrónico (obligatorio para enviar factura):</label>
         <input
@@ -93,14 +91,12 @@
     </ng-template>
   </div>
 
-  <!-- ===================== SIN CLIENTE ===================== -->
   <ng-template #noCliente>
     <p class="texto-secundario">
       Busque un cliente pendiente de pago para mostrar los detalles aquí.
     </p>
   </ng-template>
 
-  <!-- ===================== MENSAJE GENERAL ===================== -->
   <p class="mensaje-pago">{{ mensaje }}</p>
 </div>
 
