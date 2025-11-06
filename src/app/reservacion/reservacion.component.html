@@ -97,7 +97,9 @@
         </span>
       </p>
 
-      <p><strong>Precio base:</strong> Q {{ habitacion?.precio }}</p>
+      <p><strong>Precio Habitacion/Noche:</strong> Q {{ habitacion?.precio }}</p>
+      <p><strong>Precio Habitacion/Noche:</strong> $ {{ precioPaypal(habitacion?.precio) }}</p>
+     
       <hr />
 
       <!-- Botón para abrir modal de servicios -->

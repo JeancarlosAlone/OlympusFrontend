@@ -84,13 +84,17 @@ export class ReservacionComponent implements OnInit {
     {
       nombre: 'Área de lavandería',
       descripcion: 'Lavandería autoservicio y servicio express.',
-      precio: 25, descuento: 0, precioFinal: 25,
+      precio: 25, 
+      descuento: 0, 
+      precioFinal: 25,
       imagen: 'assets/img/servicios/lavanderia.jpg', seleccionado: false
     },
     {
       nombre: 'Entretenimiento para adultos',
       descripcion: 'Acceso a bar temático y shows nocturnos exclusivos.',
-      precio: 100, descuento: 0, precioFinal: 100,
+      precio: 100, 
+      descuento: 0, 
+      precioFinal: 100,
       sesiones: 1,
       imagen: 'assets/img/servicios/entretenimiento.jpg',
       seleccionado: false
@@ -111,6 +115,7 @@ export class ReservacionComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    localStorage.setItem('idRoomReservacion', id.toString());
     this.cargarHabitacion(id);
 
     const hoy = new Date();
@@ -135,7 +140,7 @@ export class ReservacionComponent implements OnInit {
       this.minFechaSalida = `${yyyy}-${mm}-${dd}`;
     }
   }
-
+ 
   cargarHabitacion(id: number) {
     this.roomsService.getRoomById(id).subscribe({
       next: (data) => {
@@ -181,9 +186,29 @@ export class ReservacionComponent implements OnInit {
     const reservaData = { habitacion: habitacionCompleta, cliente: this.cliente, serviciosSeleccionados, total };
     this.reservaService.setReserva(reservaData);
     this.router.navigate(['/pago-reserva']);
-  }
-
-  abrirMenuServicios() {
+    }
+   
+    precioPaypal(preciohabitacion: any) {
+      // Actualiza precioFinal de los servicios y calcula el total
+      let totalServicios = 0;
+      this.listaServicios.forEach(servicio => {
+      
+        if (servicio.seleccionado) {
+          totalServicios += Number((servicio.precioFinal||servicio.precio||0 ));
+        }
+      });
+      const precioHabitacionUSD = Number((preciohabitacion ));
+      const { fechaInicio, fechaFin } = this.cliente;
+      const inicio = new Date(fechaInicio);
+      let noches = 1;
+        const fin = new Date(fechaFin);
+        const diffMs = fin.getTime() - inicio.getTime();
+        noches = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+       
+      return ((precioHabitacionUSD* noches + totalServicios)/7.74).toFixed(2);  ;
+    }
+  
+    abrirMenuServicios() {
     if (!this.validarDatosCliente()) return;
     const { fechaInicio, fechaFin } = this.cliente;
     let noches = 1;

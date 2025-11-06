@@ -95,6 +95,7 @@ export class HabitacionDetalleComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    localStorage.setItem('idRoomReservacion',id.toString());
     this.cargarHabitacion(id);
 
     const hoy = new Date();

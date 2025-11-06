@@ -111,7 +111,8 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     const data = this.reservaService.getReserva();
     this.route.queryParams.subscribe(params => {
-      this.origen = params['origen'] === 'usuario' ? 'usuario' : 'cliente';
+      // this.origen = params['origen'] === 'usuario' ? 'usuario' : 'cliente';
+      console.log('Origen de la reserva:', this.origen);
     });
 
     if (!data) {
@@ -139,7 +140,7 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
     );
 
     // 💰 Total general = precio × noches + servicios
-    this.total = (precioBase * noches) + totalServicios;
+    this.total = (((precioBase * noches) + totalServicios)/7.74).toFixed(2) as unknown as number;
 
     console.log('📅 Noches:', noches);
     console.log('🏨 Precio base habitación:', precioBase);
@@ -244,11 +245,28 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
     }).render('#paypal-button-container');
   }
 
-  // En tu ts
-regresar() {
-  // Guardar los datos del cliente en el localStorage para preservarlos
-  localStorage.setItem('cliente', JSON.stringify(this.cliente));
-  this.router.navigate(['reservar/:id']);
-}
+  regresar() {
+    // Guardar los datos del cliente en el localStorage para preservarlos
+    localStorage.setItem('cliente', JSON.stringify(this.cliente));
+    const localrol = localStorage.getItem('rol');
+
+    
+    if (localrol === 'admin' || localrol === 'user') {
+      // Usar el id de la habitación para la navegación
+      const idHabitacion = localStorage.getItem('idRoomReservacion');
+      if (idHabitacion) {
+        this.router.navigate([`/SACH/RegistroHuesped/${idHabitacion}`]);
+        localStorage.removeItem('idRoomReservacion');
+      }
+    }
+    else if(localrol==='cliente'){
+       const idHabitacion = localStorage.getItem('idRoomReservacion');
+      if (idHabitacion) {
+        this.router.navigate([`reservar/${idHabitacion}`]);
+        localStorage.removeItem('idRoomReservacion');
+      }
+    }
+
+  }
 
 }
