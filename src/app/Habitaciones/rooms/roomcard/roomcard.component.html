@@ -1,4 +1,4 @@
-<div class="room-card">
+<div class="room-card" [ngClass]="{'ocupada': room.estado === 'ocupada'}">
   <!-- Imagen -->
   <div class="image-container" (click)="verHabitacion(room.id_Rooms)">
     <img
@@ -29,7 +29,7 @@
     </p>
   </div>
 
-  <!-- Nueva barra elegante inferior -->
+  <!-- Barra inferior admin -->
   <div class="admin-bar" *ngIf="admin">
     <button class="edit-btn" (click)="editarRoom(room)">
       <i class="fa-solid fa-pen-to-square"></i> Editar
@@ -37,5 +37,22 @@
     <button class="delete-btn" (click)="eliminarRoom(room.id_Rooms)">
       <i class="fa-solid fa-trash"></i> Eliminar
     </button>
+  </div>
+</div>
+
+<div *ngIf="mostrarModalOcupada" class="modal-backdrop" (click)="cerrarModalOcupada()">
+  <div class="modal-ocupada" (click)="$event.stopPropagation()">
+    <h2>🚫 Habitación Ocupada</h2>
+    <p>Lo sentimos, esta habitación ya está reservada en este momento.</p>
+    <button class="btn-cerrar" (click)="cerrarModalOcupada()">Entendido</button>
+  </div>
+</div>
+
+<!-- 🔸 Modal de habitación NO eliminable -->
+<div *ngIf="mostrarModalNoEliminable" class="modal-backdrop" (click)="cerrarModalOcupada()">
+  <div class="modal-ocupada" (click)="$event.stopPropagation()">
+    <h2>⚠️ Acción no permitida</h2>
+    <p>{{ mensajeModal }}</p>
+    <button class="btn-cerrar" (click)="cerrarModalOcupada()">Entendido</button>
   </div>
 </div>

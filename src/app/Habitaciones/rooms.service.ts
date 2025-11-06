@@ -81,4 +81,9 @@ updateRoom(id_rooms: number, room: Room): Observable<Room> {
     const url = `${this.baseUrl}/disponibles?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&numPersonas=${numPersonas}`;
     return this.http.get<Room[]>(url);
   }
+
+  verificarHistoricoReservas(idHabitacion: number) {
+  return this.http.get<boolean>(`http://localhost:8080/api/habitaciones/${idHabitacion}/historial`);
+}
+
 }
