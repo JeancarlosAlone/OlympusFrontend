@@ -24,6 +24,7 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
   cliente: any = null;
   serviciosSeleccionados: any[] = [];
   total = 0;
+  totalqutzales = 0;
   mensaje = '';
   mostrarModal = false;
   mensajeModal = '';
@@ -73,7 +74,6 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
       tipoRegistro: esUsuario ? 'manual' : 'enLinea',
       habitacionAsignada: { id_Rooms: reserva.habitacion.id_Rooms },
 
-      // 👇 NUEVO: Enviar los servicios seleccionados al backend
       serviciosSeleccionados: reserva.serviciosSeleccionados || []
     };
 
@@ -125,23 +125,19 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
     this.cliente = data.cliente;
     this.serviciosSeleccionados = data.serviciosSeleccionados || [];
 
-    // 🧮 Cálculo de noches
     const fechaInicio = new Date(this.cliente.fechaInicio);
     const fechaFin = new Date(this.cliente.fechaFin);
     const noches = Math.max(1, Math.ceil((+fechaFin - +fechaInicio) / (1000 * 60 * 60 * 24)));
 
-    // 💵 Precio base habitación
     const precioBase = Number(this.habitacion?.precio) || 0;
 
-    // 🧾 Total de servicios adicionales
     const totalServicios = this.serviciosSeleccionados.reduce(
       (acc: number, s: any) => acc + Number(s.precioFinal || s.precio || 0),
       0
     );
 
-    // 💰 Total general = precio × noches + servicios
     this.total = (((precioBase * noches) + totalServicios)/7.74).toFixed(2) as unknown as number;
-
+    this.totalqutzales = ((precioBase * noches) + totalServicios).toFixed(2) as unknown as number;  
     console.log('📅 Noches:', noches);
     console.log('🏨 Precio base habitación:', precioBase);
     console.log('🧾 Total servicios adicionales:', totalServicios);

@@ -83,7 +83,7 @@
     <div class="bloque detalle-habitacion">
       <h3>Datos de la habitación</h3>
 
-      <p><strong>ID:</strong> {{ habitacion?.id_Rooms }}</p>
+      <p><strong>Número de habitación:</strong> {{ habitacion?.id_Rooms }}</p>
       <p><strong>Tipo:</strong> {{ habitacion?.habitacion | titlecase }}</p>
       <p><strong>Nivel:</strong> {{ habitacion?.nivel }}</p>
 
@@ -97,8 +97,8 @@
         </span>
       </p>
 
-      <p><strong>Precio Habitacion/Noche:</strong> Q {{ habitacion?.precio }}</p>
-      <p><strong>Precio Habitacion/Noche:</strong> $ {{ precioPaypal(habitacion?.precio) }}</p>
+      <p><strong>Precio por Noche:</strong> Q {{ habitacion?.precio }}</p>
+      <p><strong>Precio Total:</strong> $ {{ precioPaypal(habitacion?.precio) }}</p>
      
       <hr />
 

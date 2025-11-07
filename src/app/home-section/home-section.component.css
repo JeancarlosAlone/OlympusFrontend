@@ -28,7 +28,7 @@
 /* CONTENEDOR PRINCIPAL */
 .SACH {
   padding-top: calc(clamp(80px, 15vw, 120px) + 3rem);
-  background-color: #f5f5dc;
+  background-color: white;
   min-height: 100vh;
   background-image: radial-gradient(circle at 30% 50%, rgba(255, 215, 0, 0.15), transparent 70%);
 }
