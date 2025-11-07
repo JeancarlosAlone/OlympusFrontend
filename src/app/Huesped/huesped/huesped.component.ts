@@ -99,4 +99,13 @@ export class HuespedComponent implements OnInit {
       alert('Solo se puede finalizar una estadía con estado "Pagado".');
     }
   }
+
+
+  limpiarFiltros(): void {
+  this.filtroGeneral = '';
+  this.filtroFecha = '';
+  this.activeTab = 'todos';
+  this.aplicarFiltros();
+}
+
 }

@@ -1,200 +1,192 @@
+/* ===================== CONTENEDOR PRINCIPAL ===================== */
 .usuarios-container {
   font-family: "Montserrat", "Segoe UI", sans-serif;
-  font-size: 20px;
-  padding: 1rem;
-  background-color: #f8f8f8;
+  font-size: 18px;
+  padding: 1.5rem 2rem;
+  background-color: #F5F5DC; /* Blanco crema */
   min-height: 100vh;
-  max-width: 100%;
-  margin: 0 auto;
   box-sizing: border-box;
+  color: #000000;
 }
 
+/* ===================== TABLA DE USUARIOS ===================== */
 .usuarios-table {
   width: 100%;
-  max-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background-color: white;
-  overflow: auto;
-  table-layout: auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  margin-bottom: 2rem;
 }
 
 .usuarios-table thead {
-  background: linear-gradient(135deg, #0a1f3a, #1a3a6a);
-  color: #d4af37;
-  box-shadow: 0 4px 12px rgba(10, 31, 58, 0.2);
+  background: linear-gradient(90deg, #000000 0%, #A67C00 100%);
+  color: #FFD700;
 }
 
 .usuarios-table th {
-  padding: 1rem 0.5rem;
+  padding: 1rem;
   text-align: left;
-  font-weight: 500;
-  letter-spacing: 0.4px;
+  font-weight: 600;
   text-transform: uppercase;
-  font-size: 1.4rem;
-  position: relative;
-}
-
-.usuarios-table th:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 50%;
-  height: 50%;
-  width: 1px;
-  background-color: rgba(212, 175, 55, 0.3);
+  font-size: 1.1rem;
+  border-bottom: 3px solid #FFD700;
 }
 
 .usuarios-table tbody tr {
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .usuarios-table tbody tr:hover {
-  background-color: #f0f4f9;
-
-  box-shadow: 0 4px 12px rgba(10, 31, 58, 0.1);
+  background-color: rgba(255, 215, 0, 0.08);
+  box-shadow: inset 0 0 10px rgba(166, 124, 0, 0.25);
 }
 
 .usuarios-table td {
-  padding: 1rem 1rem;
-  color: #333;
-  border-bottom: 1px solid #eaeaea;
-  font-size: 20px;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 1rem;
 }
 
+/* ===================== FOTO DE USUARIO ===================== */
 .user-image {
-  width: 100px;
-  height: 100px;
+  width: 85px;
+  height: 85px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #d4af37;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 3px solid #FFD700;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
 }
 
+.user-image:hover {
+  transform: scale(1.05);
+}
+
+/* ===================== CONTRASEÑA ===================== */
 .password-cell {
   font-family: "Courier New", monospace;
-  color: #666;
-  font-size: 0.85rem;
+  color: #555;
+  font-size: 0.95rem;
   letter-spacing: 1px;
 }
 
+/* ===================== BOTONES ===================== */
 .btn-group {
   display: flex;
   gap: 1rem;
+  justify-content: center;
 }
 
 .btn-editar,
 .btn-eliminar {
-  padding: 0.3rem;
+  padding: 0.5rem 1rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   text-transform: uppercase;
-  font-size: 15px;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
+/* Botón Editar */
 .btn-editar {
-  background-color: #0a1f3a;
-  color: white;
+  background: linear-gradient(135deg, #000000, #A67C00);
+  color: #FFD700;
 }
 
 .btn-editar:hover {
-  background-color: #1a3a6a; /* Un azul un poco más claro */
+  background: linear-gradient(135deg, #FFD700, #A67C00);
+  color: #000000;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(10, 31, 58, 0.2);
 }
 
+/* Botón Eliminar */
 .btn-eliminar {
-  background-color: #d4af37;
-  color: #0a1f3a;
-  font-weight: 600;
+  background-color: #A67C00;
+  color: #fff;
 }
 
 .btn-eliminar:hover {
-  background-color: #e8c252; /* Un dorado más claro */
+  background-color: #FFD700;
+  color: #000000;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(212, 175, 55, 0.2);
 }
 
+/* ===================== BOTÓN REGISTRAR ===================== */
+.btn-registrar {
+  display: block;
+  margin: 30px auto 0;
+  background: linear-gradient(135deg, #000000, #A67C00);
+  color: #FFD700;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-registrar:hover {
+  background: linear-gradient(135deg, #FFD700, #A67C00);
+  color: #000000;
+  transform: translateY(-2px);
+}
+
+/* ===================== MENSAJE SIN USUARIOS ===================== */
+.no-users-message {
+  text-align: center;
+  padding: 40px;
+  color: #555;
+  background-color: #fffbe6;
+  border: 2px dashed #A67C00;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 50px auto;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* ===================== LOADER ===================== */
 .loader-container {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   margin-top: 20px;
-  font-weight: 500;
-  color: #555;
-}
-
-.btn-registrar {
-  display: block;
-  margin: 20px auto 0 auto;
-  background-color: #0a1f3a; /* Azul moderno */
-  color: white;
   font-weight: 600;
-  padding: 10px 20px;
-  margin-top: 20px;
-  border-radius: 8px;
-  font-family: "Montserrat", sans-serif;
-  font-size: 16px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  align-items: center;
+  color: #A67C00;
 }
 
-@media (max-width: 1200px) {
-  .usuarios-table {
-    display: block;
-    overflow-x: auto;
-    min-width: 600px;
-  }
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 1024px) {
   .usuarios-table th,
   .usuarios-table td {
-    font-size: 1.5rem;
-    padding: 1rem;
+    font-size: 0.95rem;
   }
 
   .user-image {
-    width: 80px;
-    height: 80px;
-  }
-
-  .btn-editar,
-  .btn-eliminar {
-    font-size: 16px;
-    padding: 0.5rem 1rem;
+    width: 70px;
+    height: 70px;
   }
 }
 
 @media (max-width: 768px) {
   .usuarios-container {
-    padding: 0.5rem;
-    padding-top: 150px;
+    padding: 1rem;
   }
 
   .usuarios-table {
     display: block;
     overflow-x: auto;
-    min-width: 600px;
-  }
-
-  .usuarios-table th,
-  .usuarios-table td {
-    white-space: normal;
-    font-size: 1.2rem;
-
-    padding: 0.8rem 1rem;
-  }
-
-  .user-image {
-    width: 60px;
-    height: 60px;
+    border-radius: 8px;
   }
 
   .btn-group {
@@ -204,47 +196,7 @@
 
   .btn-editar,
   .btn-eliminar {
-    font-size: 14px;
-    padding: 0.4rem 0.8rem;
-  }
-
-  .btn-registrar {
     width: 100%;
-    font-size: 14px;
-    padding: 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .usuarios-container {
-    font-size: 18px;
-  }
-  .usuarios-table {
-    display: block;
-    overflow-x: auto;
-    /* min-width: 600px; */
-     width: 100%;
-  }
-
-  .usuarios-table th,
-  .usuarios-table td {
-    font-size: 1rem;
-    padding: 0.6rem 0.8rem;
-  }
-
-  .user-image {
-    width: 50px;
-    height: 50px;
-  }
-
-  .btn-editar,
-  .btn-eliminar {
-    font-size: 12px;
-    padding: 0.3rem 0.6rem;
-  }
-
-  .btn-registrar {
-    font-size: 12px;
-    padding: 0.6rem;
+    text-align: center;
   }
 }

@@ -1,24 +1,24 @@
+/* ===================== roomcard.component.css ===================== */
 .room-card {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  background: #fffdf5;
+  border: 2px solid #a67c00;
+  border-radius: 16px;
   overflow: hidden;
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(166, 124, 0, 0.25);
+  transition: 0.3s;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
 }
 
 .room-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
 }
 
-/* Imagen */
+/* IMAGEN */
 .image-container {
   position: relative;
-  height: 170px;
+  height: 180px;
   overflow: hidden;
 }
 
@@ -26,244 +26,141 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: 0.4s ease;
 }
 
 .image-container:hover .room-image {
-  transform: scale(1.04);
+  transform: scale(1.08);
 }
 
-/* Estado (Libre, Ocupada, Limpieza) */
+/* ESTADO */
 .estado {
   position: absolute;
   top: 10px;
   left: 10px;
-  padding: 4px 10px;
+  background: #ffd700;
+  color: #000;
+  font-weight: 700;
+  padding: 5px 12px;
   border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(166, 124, 0, 0.4);
 }
 
-.estado-libre {
-  background-color: #27ae60;
-}
-
-.estado-ocupada {
-  background-color: #c0392b;
-}
-
-.estado-limpieza {
-  background-color: #f39c12;
-}
-
-/* Información */
+/* INFO */
 .info {
   padding: 1rem;
   text-align: center;
-  background: #fff;
 }
 
 .room-number {
-  color: #d4af37;
   font-size: 1.8rem;
+  color: #a67c00;
   font-weight: 700;
-  margin: 0.3rem 0;
 }
 
 .room-type {
+  color: #000;
   font-weight: 600;
-  color: #0c2344;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .nivel {
-  background: #0c2344;
-  color: white;
-  border-radius: 12px;
-  padding: 0 7px;
-  font-size: 0.75rem;
-  margin-left: 5px;
+  background: #a67c00;
+  color: #fff;
+  border-radius: 8px;
+  padding: 2px 8px;
+  margin-left: 6px;
+  font-size: 0.8rem;
 }
 
 .price {
+  color: #000;
+  font-weight: 700;
   margin-top: 0.5rem;
-  color: #333;
-  font-size: 0.9rem;
-  font-weight: 500;
 }
 
-/* Barra inferior para admin */
+/* ADMIN BAR */
 .admin-bar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(90deg, #0c2344 0%, #122e5c 100%);
-  padding: 0.5rem;
-  border-top: 2px solid #d4af37;
+  padding: 0.8rem;
+  background: #000;
+  border-top: 2px solid #a67c00;
 }
 
 .admin-bar button {
   flex: 1;
-  margin: 0 4px;
-  padding: 0.45rem 0;
+  margin: 0 5px;
   border: none;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  border-radius: 8px;
+  color: #fff;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  padding: 0.5rem 0;
+  transition: 0.3s;
 }
 
 .edit-btn {
-  background-color: #1e3a8a;
+  background: linear-gradient(90deg, #a67c00, #ffd700);
+  color: #000;
 }
 
 .edit-btn:hover {
-  background-color: #2f4fae;
+  background: linear-gradient(90deg, #ffd700, #a67c00);
 }
 
 .delete-btn {
-  background-color: #d62828;
+  background: #000;
+  border: 2px solid #ffd700;
 }
 
 .delete-btn:hover {
-  background-color: #b51f1f;
+  background: #a67c00;
+  color: #000;
 }
 
-/* Íconos */
-.admin-bar i {
-  font-size: 0.9rem;
-}
-
-/* Barra inferior de administración */
-.admin-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(90deg, #0c2344, #132c5b);
-  padding: 0.6rem 0.7rem;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  gap: 0.5rem;
-  box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Botones refinados */
-.admin-bar button {
-  flex: 1;
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border: none;
-  padding: 0.45rem 0.6rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  color: #fff;
-}
-
-/* Botón editar */
-.admin-bar .edit-btn {
-  background: #0c2344; /* Azul oscuro institucional */
-}
-
-.admin-bar .edit-btn:hover {
-  background: #d4af37;
-  color: #0c2344;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Botón eliminar */
-.admin-bar .delete-btn {
-  background: #b52b27; /* Rojo vino elegante */
-}
-
-.admin-bar .delete-btn:hover {
-  background: #ff4d4d;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Íconos dentro de los botones */
-.admin-bar i {
-  margin-right: 6px;
-  font-size: 0.9rem;
-  vertical-align: middle;
-}
-
-/* 🔹 Fondo semitransparente */
+/* MODAL */
 .modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.55);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-in-out;
 }
 
-/* 🔹 Caja del modal */
 .modal-ocupada {
-  background: #ffffff;
+  background: #fffdf5;
+  border: 2px solid #a67c00;
   border-radius: 16px;
-  padding: 2rem 2.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  padding: 2rem;
   text-align: center;
-  max-width: 420px;
   width: 90%;
-  animation: scaleUp 0.25s ease-in-out;
-  font-family: "Poppins", sans-serif;
+  max-width: 420px;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
 }
 
-/* 🔹 Título */
 .modal-ocupada h2 {
-  color: #0c2344;
+  color: #a67c00;
   font-size: 1.5rem;
-  margin-bottom: 0.8rem;
 }
 
-/* 🔹 Texto */
 .modal-ocupada p {
-  color: #333;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
+  color: #000;
+  margin: 1rem 0 1.5rem;
 }
 
-/* 🔹 Botón */
-.modal-ocupada .btn-cerrar {
-  background: linear-gradient(90deg, #0c2344, #d4af37);
-  color: #fff;
+.btn-cerrar {
+  background: linear-gradient(90deg, #a67c00, #ffd700);
+  color: #000;
   border: none;
-  padding: 0.6rem 1.3rem;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: 600;
-  transition: transform 0.2s;
+  transition: 0.3s;
 }
 
-.modal-ocupada .btn-cerrar:hover {
-  transform: scale(1.05);
-}
-
-/* 🔹 Animaciones */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes scaleUp {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+.btn-cerrar:hover {
+  background: linear-gradient(90deg, #ffd700, #a67c00);
 }

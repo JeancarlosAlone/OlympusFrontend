@@ -9,6 +9,11 @@
       [(ngModel)]="clienteIdentifier"
       (input)="buscarCliente()"
     />
+
+    <!-- Botón Limpiar -->
+    <button class="btn-limpiar" (click)="limpiarBusqueda()">
+      <i class="fa-solid fa-broom"></i> Limpiar
+    </button>
   </div>
 
   <!-- ===================== LISTA DE RESULTADOS ===================== -->
@@ -28,10 +33,10 @@
   <div *ngIf="cliente; else noCliente">
     <div class="resumen">
       <h3>Resumen de la habitación</h3>
-      <p><strong>ID:</strong> {{ habitacion?.id_Rooms }}</p>
+      <p><strong>Número de habitación:</strong> {{ habitacion?.id_Rooms }}</p>
       <p><strong>Tipo:</strong> {{ habitacion?.habitacion | titlecase }}</p>
-      <p><strong>Nivel:</strong> {{ habitacion?.nivel || cliente?.habitacionAsignada?.nivel || '—' }}</p>
       <p><strong>Precio por noche:</strong> Q {{ precioPorNoche | number: '1.2-2' }}</p>
+      <p><strong>Precio total por noches:</strong> $ {{ precioTotalUsd | number:'1.2-2' }}</p>
 
       <h3>Servicios adicionales</h3>
       <div *ngIf="serviciosSeleccionados.length > 0; else sinServicios">
@@ -43,6 +48,7 @@
           </li>
         </ul>
         <p><strong>Total servicios:</strong> Q {{ cliente?.totalServicios || 0 | number: '1.2-2' }}</p>
+        <p><strong>Total servicios (USD):</strong> $ {{ totalServiciosUsd | number:'1.2-2' }}</p>
       </div>
       <ng-template #sinServicios>
         <p class="texto-secundario">Sin servicios adicionales seleccionados.</p>
@@ -76,7 +82,10 @@
 
       <hr />
 
-      <h3>Total a pagar: <span class="total">Q {{ total | number: '1.2-2' }}</span></h3>
+      <h3 class="total-title">
+        Total a pagar (USD): 
+        <span class="total-usd">$ {{ totalUsd | number:'1.2-2' }}</span>
+      </h3>
     </div>
 
     <!-- ===================== BOTONES PAYPAL ===================== -->
@@ -93,7 +102,7 @@
 
   <ng-template #noCliente>
     <p class="texto-secundario">
-      Busque un cliente pendiente de pago para mostrar los detalles aquí.
+      Busque el cliente que tiene pendiente su pago de reserva
     </p>
   </ng-template>
 

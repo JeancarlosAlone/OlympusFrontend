@@ -25,9 +25,10 @@ export interface HuespedRequest {
   usuarioRegistrador: { id_users: string };
   habitacionAsignada: { id_Rooms: number };
   serviciosSeleccionados?: any[];
+  
 }
 
-export interface HuespedResponse extends Huesped {
+ export interface HuespedResponse extends Huesped {
   idHuesped: string;
   id_users?: string | null;
   usuarioRegistrador?: User | null;
@@ -49,4 +50,10 @@ export interface HuespedResponse extends Huesped {
     precio?: number;
     image_url?: string;
   } | null;
+
+  /**
+   * 💵 Monto convertido a dólares (calculado en backend)
+   */
+  montoUSD?: number;
 }
+

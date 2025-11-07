@@ -13,6 +13,9 @@ import { Room } from '../Habitaciones/rooms.model';
 })
 export class ReservarHabitacionComponent implements OnInit {
 
+  Header: string = 'OLYMPUS HOTEL';
+
+
   rooms: Room[] = [];
   isLoading = false;
   customMessage = '';

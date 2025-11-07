@@ -1,3 +1,4 @@
+
 <div class="detalle-container" *ngIf="!isLoading; else cargando">
 
   <!-- ENCABEZADO: Botón Regresar fuera de la imagen -->
@@ -88,7 +89,7 @@
     <div class="bloque detalle-habitacion">
       <h3>Datos de la habitación</h3>
 
-      <p><strong>ID:</strong> {{ habitacion?.id_Rooms }}</p>
+      <p><strong>Número de habitación:</strong> {{ habitacion?.id_Rooms }}</p>
       <p><strong>Tipo:</strong> {{ habitacion?.habitacion | titlecase }}</p>
       <p><strong>Nivel:</strong> {{ habitacion?.nivel }}</p>
 
@@ -131,7 +132,7 @@
   </div>
 </div>
 
-<!-- MODAL DE SERVICIOS -->
+<!-- MODAL DE SERVICIOS (SIN IMÁGENES, MISMO DISEÑO) -->
 <div class="modal-overlay" *ngIf="mostrarMenuServicios">
   <div class="modal-servicios">
     <div class="modal-header">
@@ -147,8 +148,6 @@
 
     <div class="servicios-grid">
       <div class="servicio-card" *ngFor="let servicio of listaServicios">
-        <img [src]="servicio.imagen" alt="{{ servicio.nombre }}" class="servicio-img" />
-
         <div class="servicio-info">
           <h4>{{ servicio.nombre }}</h4>
           <p>{{ servicio.descripcion }}</p>
@@ -178,7 +177,10 @@
   </div>
 </div>
 
+
 <!-- CARGANDO -->
 <ng-template #cargando>
   <div class="loading">Cargando información de la habitación...</div>
 </ng-template>
+
+

@@ -1,49 +1,49 @@
+/* ==================== CONTENEDOR GENERAL ==================== */
 .huesped-container {
-  background-color: #f8f9fc;
-  padding: 2rem;
-  border-radius: 12px;
+  background: linear-gradient(180deg, #fdfcf6 0%, #fffaf0 100%);
+  padding: 2.5rem;
+  border-radius: 20px;
   font-family: "Poppins", sans-serif;
+  color: #000;
+  min-height: 100vh;
 }
 
-/* 🔹 Encabezado y filtros */
+/* ==================== FILTROS Y ENCABEZADO ==================== */
 .header-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.header-section h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #001b44;
-  text-align: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
 }
 
 .filters {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
 }
 
 .filter-input,
 .filter-date {
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  outline: none;
-  transition: 0.3s ease;
-  font-size: 0.95rem;
+  background: #fffdf5;
+  border: 2px solid #d8c98f;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  width: 250px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(166, 124, 0, 0.1);
 }
 
 .filter-input:focus,
 .filter-date:focus {
-  border-color: #d4af37;
-  box-shadow: 0 0 4px rgba(212, 175, 55, 0.4);
+  border-color: #a67c00;
+  box-shadow: 0 0 12px rgba(166, 124, 0, 0.3);
+  outline: none;
 }
 
-/* 🔹 Tabs */
+/* ==================== TABS ==================== */
 .tabs {
   display: flex;
   justify-content: center;
@@ -52,64 +52,114 @@
 }
 
 .tabs button {
-  background: #001b44;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
+  background: #000;
+  color: #ffd700;
+  border: 2px solid #a67c00;
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-weight: 600;
   cursor: pointer;
   transition: 0.3s;
 }
 
-.tabs button.active {
-  background: #d4af37;
-  color: #001b44;
-  font-weight: 600;
+.tabs button:hover {
+  background: #a67c00;
+  color: #fff;
 }
 
-/* 🔹 Cards */
+.tabs button.active {
+  background: linear-gradient(90deg, #a67c00, #ffd700);
+  color: #000;
+  box-shadow: 0 3px 10px rgba(166, 124, 0, 0.3);
+}
+
+/* ==================== RESULTADOS ==================== */
+.result-info {
+  text-align: center;
+  background: #fffdf5;
+  border: 1.5px solid #a67c00;
+  color: #000;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  margin: 0 auto 1.5rem;
+  display: inline-block;
+  box-shadow: 0 3px 10px rgba(166, 124, 0, 0.15);
+}
+
+.no-results {
+  text-align: center;
+  font-style: italic;
+  color: #555;
+  margin-top: 2rem;
+}
+
+/* ==================== CARDS ==================== */
 .huesped-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.8rem;
 }
 
 .huesped-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.2rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #fffdf5;
+  border: 2px solid #e6dca8;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 18px rgba(166, 124, 0, 0.15);
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .huesped-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(166, 124, 0, 0.3);
 }
 
+.huesped-card h3 {
+  color: #000;
+  font-weight: 700;
+  border-bottom: 2px solid #a67c00;
+  display: inline-block;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+/* ==================== ESTADOS ==================== */
 .estado-pagado {
-  color: #00a65a;
-  font-weight: bold;
+  color: #00b36b;
+  font-weight: 700;
+  background: #e7f8f0;
+  padding: 3px 8px;
+  border-radius: 8px;
 }
 
 .estado-pendiente {
-  color: #e74c3c;
-  font-weight: bold;
+  color: #b02a37;
+  font-weight: 700;
+  background: #fceaea;
+  padding: 3px 8px;
+  border-radius: 8px;
 }
 
-/* 🔹 Switch */
+/* ==================== SWITCH ==================== */
 .switch-container {
-  margin-top: 10px;
+  margin-top: 1rem;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+.switch-label {
+  font-weight: 600;
+  color: #000;
+}
+
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 26px;
+  width: 55px;
+  height: 28px;
 }
 
 .switch input {
@@ -120,21 +170,21 @@
 
 .slider {
   position: absolute;
-  cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #e74c3c;
+  background-color: #b02a37;
   transition: 0.4s;
   border-radius: 30px;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 20px;
-  width: 20px;
+  height: 22px;
+  width: 22px;
   left: 3px;
   bottom: 3px;
   background-color: white;
@@ -143,35 +193,49 @@
 }
 
 input:checked + .slider {
-  background-color: #00c57d;
+  background: linear-gradient(90deg, #a67c00, #ffd700);
 }
 
 input:checked + .slider:before {
-  transform: translateX(24px);
+  transform: translateX(27px);
 }
 
-.switch-label {
-  font-weight: 600;
-  color: #001b44;
+/* ==================== ANIMACIÓN DE CARGA ==================== */
+.huesped-card {
+  animation: fadeInUp 0.5s ease both;
 }
 
+@keyframes fadeInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 
-.result-info {
-  text-align: center;
-  margin-bottom: 1rem;
+.btn-limpiar {
+  background: linear-gradient(90deg, #a67c00, #ffd700);
+  color: #000;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
   font-weight: 600;
-  color: #001b44;
-  background-color: #f3f5fa;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  display: inline-block;
   font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(166, 124, 0, 0.25);
 }
 
-.no-results {
-  text-align: center;
-  font-weight: 500;
-  color: #666;
-  font-style: italic;
-  margin-top: 2rem;
+.btn-limpiar:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(90deg, #ffd700, #a67c00);
+  box-shadow: 0 6px 15px rgba(166, 124, 0, 0.4);
+}
+
+.btn-limpiar i {
+  margin-right: 6px;
+  color: #000;
 }

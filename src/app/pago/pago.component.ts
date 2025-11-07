@@ -23,6 +23,9 @@ export class PagoComponent implements OnInit, AfterViewInit {
   mostrarModal = false;
   mensajeModal = '';
   emailCliente: string = '';
+  precioTotalUsd: number = 0;
+totalServiciosUsd: number = 0;
+totalUsd: number = 0;
 
   nitFactura: string = '';
   moneda: string = 'USD';
@@ -113,26 +116,32 @@ export class PagoComponent implements OnInit, AfterViewInit {
     this.clienteIdentifier = `${huesped.nameHuesped} ${huesped.apellidoHuesped}`;
   }
 
-  private cargarDatosHuesped(huesped: any) {
-    this.cliente = huesped;
-    this.habitacion = huesped.habitacionAsignada;
-    this.serviciosSeleccionados = huesped.servicios || [];
+ private cargarDatosHuesped(huesped: any) {
+  this.cliente = huesped;
+  this.habitacion = huesped.habitacionAsignada;
+  this.serviciosSeleccionados = huesped.servicios || [];
 
-    const fechaInicio = new Date(huesped.fechaRegistro);
-    const fechaFin = new Date(huesped.fechaSalida);
-    this.noches = Math.max(1, Math.ceil((+fechaFin - +fechaInicio) / (1000 * 60 * 60 * 24)));
+  const fechaInicio = new Date(huesped.fechaRegistro);
+  const fechaFin = new Date(huesped.fechaSalida);
+  this.noches = Math.max(1, Math.ceil((+fechaFin - +fechaInicio) / (1000 * 60 * 60 * 24)));
 
-    this.precioPorNoche = Number(this.habitacion?.precio) || 0;
-    const totalServicios = this.serviciosSeleccionados.reduce(
-      (acc: number, s: any) => acc + Number(s.precioFinal || s.precio || 0),
-      0
-    );
+  this.precioPorNoche = Number(this.habitacion?.precio) || 0;
+  const totalServicios = this.serviciosSeleccionados.reduce(
+    (acc: number, s: any) => acc + Number(s.precioFinal || s.precio || 0),
+    0
+  );
 
-    this.cliente.totalServicios = totalServicios;
-    this.total = (this.precioPorNoche * this.noches) + totalServicios;
-    this.mensaje = '';
-  }
+  this.cliente.totalServicios = totalServicios;
+  this.total = (this.precioPorNoche * this.noches) + totalServicios;
 
+  // 🔹 Conversión a USD (división 7.75)
+  const tipoCambio = 7.75;
+  this.precioTotalUsd = (this.precioPorNoche * this.noches) / tipoCambio;
+  this.totalServiciosUsd = totalServicios / tipoCambio;
+  this.totalUsd = this.total / tipoCambio;
+
+  this.mensaje = '';
+}
   // ===================== VALIDAR CORREO =====================
   verificarCorreo() {
     const patronCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -170,25 +179,30 @@ export class PagoComponent implements OnInit, AfterViewInit {
       style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
 
       createOrder: async () => {
-        if (!this.emailCliente || !this.emailCliente.trim()) {
-          this.mensaje = 'Debe ingresar un correo válido antes de pagar.';
-          return Promise.reject('Correo requerido');
-        }
+  if (!this.emailCliente || !this.emailCliente.trim()) {
+    this.mensaje = 'Debe ingresar un correo válido antes de pagar.';
+    return Promise.reject('Correo requerido');
+  }
 
-        if (!this.total || this.total <= 0) {
-          this.mensaje = 'Monto inválido.';
-          return Promise.reject('Monto inválido');
-        }
+  if (!this.totalUsd || this.totalUsd <= 0) {
+    this.mensaje = 'Monto inválido.';
+    return Promise.reject('Monto inválido');
+  }
 
-        const res = await fetch('http://localhost:8080/api/pagos/crear-orden', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ total: this.total })
-        });
+  // 🔹 Enviamos el total en dólares y especificamos la moneda
+  const res = await fetch('http://localhost:8080/api/pagos/crear-orden', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      total: this.totalUsd,
+      currency: 'USD'
+    })
+  });
 
-        const data = await res.json();
-        return data?.data?.id;
-      },
+  const data = await res.json();
+  return data?.data?.id;
+},
+
 
       onApprove: async (data: any) => {
         try {
@@ -251,4 +265,12 @@ export class PagoComponent implements OnInit, AfterViewInit {
       }
     }).render('#paypal-button-container');
   }
+
+  limpiarBusqueda(): void {
+  this.clienteIdentifier = '';
+  this.clientesEncontrados = [];
+  this.cliente = null;
+  this.mensaje = '';
+}
+
 }
