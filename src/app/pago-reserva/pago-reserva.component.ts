@@ -38,7 +38,7 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
     private huespedService: HuespedService,
     private roomsService: RoomsService,
     private ngZone: NgZone
-  ) {}
+  ) { }
 
   private isUserContext(): boolean {
     const path = window.location.pathname;
@@ -100,13 +100,13 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
       setTimeout(() => {
         this.reservaService.clearReserva();
         this.navigateHard(esUsuario ? '/SACH/habitaciones' : '/reservar');
-      }, 3500);
+      }, 3000);
     } catch (err) {
       console.error('Error al registrar huésped:', err);
       this.mostrarModalConMensaje('Ocurrió un error al registrar la reserva.');
       setTimeout(() => {
         this.navigateHard(esUsuario ? '/SACH/habitaciones' : '/reservar');
-      }, 3500);
+      }, 3000);
     }
   }
 
@@ -138,8 +138,8 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
       0
     );
 
-    this.total = (((precioBase * noches) + totalServicios)/7.74).toFixed(2) as unknown as number;
-    this.totalqutzales = ((precioBase * noches) + totalServicios).toFixed(2) as unknown as number;  
+    this.total = (((precioBase * noches) + totalServicios) / 7.74).toFixed(2) as unknown as number;
+    this.totalqutzales = ((precioBase * noches) + totalServicios).toFixed(2) as unknown as number;
     console.log('Noches:', noches);
     console.log('Precio base habitación:', precioBase);
     console.log('Total servicios adicionales:', totalServicios);
@@ -170,71 +170,78 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
   }
 
   private renderizarBotonPaypal() {
-    const paypal = (window as any).paypal;
-    paypal.Buttons({
-      style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
+  const paypal = (window as any).paypal;
+  paypal.Buttons({
+    style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
 
-      createOrder: async () => {
-        if (this.total <= 0) {
-          this.mensaje = 'Monto inválido';
-          return Promise.reject('Monto inválido');
-        }
+   createOrder: async () => {
+  if (this.total <= 0) {
+    this.mensaje = 'Monto inválido';
+    return Promise.reject('Monto inválido');
+  }
 
   const res = await fetch(`${environment.apiUrl}/api/pagos/crear-orden`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ total: this.calcularTotalGeneralUSD(), currency: 'USD' })
+  });
+
+  const data = await res.json();
+
+  
+  if (data?.data?.id) {
+    return data.data.id;  
+  } else {
+    console.error('No se pudo obtener el ID de la orden');
+    this.mensaje = 'No se pudo obtener el ID de la orden';
+    return Promise.reject('No se pudo obtener el ID de la orden');
+  }
+},
+
+    onApprove: async (data: any) => {
+      try {
+        this.mensaje = 'Procesando pago...';
+
+        const cap = await fetch(`${environment.apiUrl}/api/pagos/capturar-orden`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ total: Number(this.calcularTotalGeneralUSD()), currency: 'USD' })
+          body: JSON.stringify({ orderId: data.orderID })  // Utiliza el orderID recibido
         });
+        const capJson = await cap.json();
 
-        const data = await res.json();
-        return data?.data?.id;
-      },
+        if (!capJson || capJson.status !== 'success') {
+          throw new Error('Error al capturar la orden');
+        }
 
-      onApprove: async (data: any) => {
-  try {
-    this.mensaje = 'Procesando pago...';
+        // Redirigir dependiendo del tipo de usuario
+        const userRole = localStorage.getItem('role'); // Obtener el rol del usuario
+        if (userRole === 'client') {
+          this.navigateHard(`/reservar/${data.orderID}`);
+        } else {
+          this.navigateHard('/SACH/habitaciones');
+        }
 
-    const cap = await fetch(`${environment.apiUrl}/api/pagos/capturar-orden`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId: data.orderID })
-    });
-    const capJson = await cap.json();
-    if (!capJson) throw new Error('No se pudo capturar la orden');
-
-    // Redirigir según el tipo de usuario
-    const userRole = localStorage.getItem('role');  // Obtener el rol desde localStorage
-
-    // Si es cliente, redirige a '/reservar'
-    if (userRole === 'client') {
-      this.navigateHard(`/reservar/${data.orderID}`);
-    }
-    // Si es admin o user, redirige a '/SACH/habitaciones'
-    else {
-      this.navigateHard('/SACH/habitaciones');
-    }
-
-  } catch (err) {
-    console.error(err);
-    this.mensaje = 'Error en PayPal';
-    this.navigateHard('/login');  // Si ocurre un error, redirige a login
-  }
-}
-,
-
-      onError: (err: any) => {
+      } catch (err) {
         console.error(err);
         this.mensaje = 'Error en PayPal';
+        this.navigateHard('/login');  // Redirigir a login si ocurre un error
       }
-    }).render('#paypal-button-container');
-  }
+    },
+
+    onError: (err: any) => {
+      console.error(err);
+      this.mensaje = 'Error en PayPal';
+    }
+  }).render('#paypal-button-container');
+}
+
 
   regresar() {
     // Guardar los datos del cliente en el localStorage para preservarlos
     localStorage.setItem('cliente', JSON.stringify(this.cliente));
     const localrol = localStorage.getItem('rol');
 
-    
+
     if (localrol === 'admin' || localrol === 'user') {
       // Usar el id de la habitación para la navegación
       const idHabitacion = localStorage.getItem('idRoomReservacion');
@@ -243,8 +250,8 @@ body: JSON.stringify({ total: Number(this.calcularTotalGeneralUSD()), currency: 
         localStorage.removeItem('idRoomReservacion');
       }
     }
-    else if(localrol==='cliente'){
-       const idHabitacion = localStorage.getItem('idRoomReservacion');
+    else if (localrol === 'cliente') {
+      const idHabitacion = localStorage.getItem('idRoomReservacion');
       if (idHabitacion) {
         this.router.navigate([`reservar/${idHabitacion}`]);
         localStorage.removeItem('idRoomReservacion');
@@ -254,52 +261,53 @@ body: JSON.stringify({ total: Number(this.calcularTotalGeneralUSD()), currency: 
   }
 
   precioPaypal(preciohabitacion: any) {
-      // Actualiza precioFinal de los servicios y calcula el total
-      let totalServicios = 0;
-      this.serviciosSeleccionados.forEach(servicio => {
-      
-        if (servicio.seleccionado) {
-          totalServicios += Number((servicio.precioFinal||servicio.precio||0 ));
-        }
-      });
-      const precioHabitacionUSD = Number((preciohabitacion ));
-      const { fechaInicio, fechaFin } = this.cliente;
-      const inicio = new Date(fechaInicio);
-      let noches = 1;
-        const fin = new Date(fechaFin);
-        const diffMs = fin.getTime() - inicio.getTime();
-        noches = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-       
-      return ((precioHabitacionUSD* noches + totalServicios)/7.74).toFixed(2);  ;
-    }
+    // Actualiza precioFinal de los servicios y calcula el total
+    let totalServicios = 0;
+    this.serviciosSeleccionados.forEach(servicio => {
 
-      calcularTotalServicios(): number {
-  return this.serviciosSeleccionados.reduce((acc, s) => acc + (s.precioFinal || s.precio || 0), 0);
-}
+      if (servicio.seleccionado) {
+        totalServicios += Number((servicio.precioFinal || servicio.precio || 0));
+      }
+    });
+    const precioHabitacionUSD = Number((preciohabitacion));
+    const { fechaInicio, fechaFin } = this.cliente;
+    const inicio = new Date(fechaInicio);
+    let noches = 1;
+    const fin = new Date(fechaFin);
+    const diffMs = fin.getTime() - inicio.getTime();
+    noches = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
 
-calcularTotalUSD(): string {
-  const totalQ = this.calcularTotalServicios();
-  return (totalQ / 7.74).toFixed(2);
-}
+    return ((precioHabitacionUSD * noches + totalServicios) / 7.74).toFixed(2);;
+  }
 
-calcularTotalGeneralUSD(): string {
-  const totalHabitacion = Number(this.precioPaypal(this.habitacion?.precio)) || 0;
-  const totalServicios = Number(this.calcularTotalUSD()) || 0;
+  calcularTotalServicios(): number {
+    return this.serviciosSeleccionados.reduce((acc, s) => acc + (s.precioFinal || s.precio || 0), 0);
+  }
 
-  const total = totalHabitacion + totalServicios;
-  return total.toFixed(2);
-}
+  calcularTotalUSD(): string {
+    const totalQ = this.calcularTotalServicios();
+    return (totalQ / 7.74).toFixed(2);
+  }
 
-calcularTotalQuetzales(): number {
-  // Obtener el total en USD llamando a la función calcularTotalGeneralUSD()
-  const totalUSD = parseFloat(this.calcularTotalGeneralUSD());
+  calcularTotalGeneralUSD(): string {
+    const totalHabitacion = Number(this.precioPaypal(this.habitacion?.precio)) || 0;
+    const totalServicios = Number(this.calcularTotalUSD()) || 0;
 
-  // Multiplicar el total en USD por la tasa de cambio 7.74 para convertirlo a quetzales
-  const totalQuetzales = (totalUSD * 7.74).toFixed(2);  // Redondear a 2 decimales
+    const total = totalHabitacion + totalServicios;
+    return total.toFixed(2);
+  }
 
-  return Number(totalQuetzales);  // Devolver el total en quetzales como número
-}
+  calcularTotalQuetzales(): number {
+    // Obtener el total en USD llamando a la función calcularTotalGeneralUSD()
+    const totalUSD = parseFloat(this.calcularTotalGeneralUSD());
 
+    // Multiplicar el total en USD por la tasa de cambio 7.74 para convertirlo a quetzales
+    const totalQuetzales = (totalUSD * 7.74).toFixed(2);  // Redondear a 2 decimales
+
+    return Number(totalQuetzales);  // Devolver el total en quetzales como número
+  }
+
+  
 
 
 } 
