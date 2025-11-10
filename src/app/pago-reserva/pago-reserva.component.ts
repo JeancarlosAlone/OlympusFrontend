@@ -231,14 +231,16 @@ onApprove: async (data: any) => {
     console.log('Pago registrado:', capJson.data?.nuevoPago);
 
     // 🔹 Redirección después de confirmar pago
-    setTimeout(() => {
-      const userRole = localStorage.getItem('rol');
-      if (userRole === 'client') {
-        this.navigateHard(`/reservar/${data.orderID}`);
-      } else {
-        this.navigateHard('/SACH/habitaciones');
-      }
-    }, 2500);
+    // 🔹 Redirección después de confirmar pago
+setTimeout(() => {
+  // Verificar si la URL de origen contiene olympusf.onrender.com/reservar
+  const isFromExternalReservar = window.location.href.includes('olympusf.onrender.com/reservar');
+  if (isFromExternalReservar) {
+    this.navigateHard('/reservar');
+  } else {
+    this.navigateHard('/SACH/habitaciones');
+  }
+}, 2500);
 
   } catch (err) {
     console.error('❌ Error en proceso de pago:', err);

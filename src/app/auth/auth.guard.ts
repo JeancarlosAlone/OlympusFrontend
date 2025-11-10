@@ -13,7 +13,7 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
 
   // Verifica si el token existe
   if (!token) {
-    alert('Gracias por preferirnos');
+    alert('error: Debes iniciar sesión para acceder a esta página.');
     router.navigate(['/reservar']);
     return false;
   }
