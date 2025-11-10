@@ -11,25 +11,24 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   const router = inject(Router);
   const snackBar = inject(MatSnackBar);
 
-  // Verifica si la ruta es pública o si está permitida por la query "origen=cliente"
-  const isPublic = !!route.data?.['public'];
-  const path = route.routeConfig?.path || state.url || '';
-  const origenClienteQuery = route.queryParams && route.queryParams['origen'] === 'cliente';
-  // Permitir acceder a la página de pago si se llega desde la página de reservas
-  const fromOlympusExternalReservar = typeof window !== 'undefined' && window.location.href.includes('olympusf.onrender.com/reservar');
+  // Verifica si el token existe o si la ruta es pública
+const isPublic = !!route.data?.['public'];
+const path = route.routeConfig?.path || state.url || '';
+const origenClienteQuery = route.queryParams && route.queryParams['origen'] === 'cliente';
+const fromOlympusExternalReservar = typeof window !== 'undefined' && window.location.href.includes('olympusf.onrender.com/reservar');
 
-  // Si es una página pública o proviene de un origen específico, permite el acceso
-  if (isPublic || path === 'pago-reserva' || origenClienteQuery || (fromOlympusExternalReservar && state.url?.includes('pago-reserva'))) {
-    return true;
-  }
+// Permitir páginas públicas, o si la URL de la ruta es pago-reserva o si proviene de reservar
+if (isPublic || path === 'pago-reserva' || origenClienteQuery || (fromOlympusExternalReservar && state.url?.includes('pago-reserva'))) {
+  return true;  // Permite el acceso
+}
 
-  // Verifica si el token existe
-  if (!token) {
-    // SnackBar o alerta si no está autenticado
-    alert('error: Debes iniciar sesión para acceder a esta página.');
-    router.navigate(['/reservar']);
-    return false;
-  }
+// Verifica si el token existe
+if (!token) {
+  alert('error: Debes iniciar sesión para acceder a esta página.');
+  router.navigate(['/reservar']);  // Redirige a la página de reserva
+  return false;
+}
+
 
   // Si la ruta requiere un rol específico, verifica si el rol del usuario coincide
   if (requiredRole) {
