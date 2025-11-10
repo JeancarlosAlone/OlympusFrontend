@@ -202,6 +202,8 @@ onApprove: async (data: any) => {
   try {
     this.mensaje = 'Procesando pago...';
 
+    
+
     // 🔹 Captura del pago
     const cap = await fetch(`${environment.apiUrl}/api/pagos/capturar-orden`, {
       method: 'POST',
@@ -230,7 +232,7 @@ onApprove: async (data: any) => {
 
     // 🔹 Redirección después de confirmar pago
     setTimeout(() => {
-      const userRole = localStorage.getItem('role');
+      const userRole = localStorage.getItem('rol');
       if (userRole === 'client') {
         this.navigateHard(`/reservar/${data.orderID}`);
       } else {
