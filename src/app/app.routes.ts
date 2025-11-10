@@ -18,11 +18,12 @@ export const routes: Routes = [
   },
 
   {
-    path: 'pago-reserva',
-    loadComponent: () =>
-      import('./pago-reserva/pago-reserva.component')
-        .then(m => m.PagoReservaComponent)
-  },
+  path: 'pago-reserva',
+  loadComponent: () =>
+    import('./pago-reserva/pago-reserva.component')
+      .then(m => m.PagoReservaComponent),
+  data: { public: true }
+},
 
   {
     path: '',
