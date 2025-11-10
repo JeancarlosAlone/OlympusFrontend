@@ -11,24 +11,25 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   const router = inject(Router);
   const snackBar = inject(MatSnackBar);
 
-  // Verifica si el token existe o si la ruta es pública
-const isPublic = !!route.data?.['public'];
-const path = route.routeConfig?.path || state.url || '';
-const origenClienteQuery = route.queryParams && route.queryParams['origen'] === 'cliente';
-const fromOlympusExternalReservar = typeof window !== 'undefined' && window.location.href.includes('olympusf.onrender.com/reservar');
+  // --- Permitir rutas públicas o accesos desde el flujo externo (pago cliente)
+  // Marca de ruta pública (opcional): { data: { public: true } }
+  const isPublic = !!route.data?.['public'];
+  const path = route.routeConfig?.path || state.url || '';
+  const origenClienteQuery = route.queryParams && route.queryParams['origen'] === 'cliente';
+  // Si la app se cargó en el dominio externo con la ruta /reservar, permitimos acceder a pago-reserva
+  const fromOlympusExternalReservar = typeof window !== 'undefined' && window.location.href.includes('olympusf.onrender.com/reservar');
 
-// Permitir páginas públicas, o si la URL de la ruta es pago-reserva o si proviene de reservar
-if (isPublic || path === 'pago-reserva' || origenClienteQuery || (fromOlympusExternalReservar && state.url?.includes('pago-reserva'))) {
-  return true;  // Permite el acceso
-}
+  if (isPublic || path === 'pago-reserva' || origenClienteQuery || (fromOlympusExternalReservar && state.url?.includes('pago-reserva'))) {
+    return true;
+  }
 
-// Verifica si el token existe
-if (!token) {
-  alert('error: Debes iniciar sesión para acceder a esta página.');
-  router.navigate(['/reservar']);  // Redirige a la página de reserva
-  return false;
-}
-
+  // Verifica si el token existe
+  if (!token) {
+    // snackBar.open('Debes iniciar sesión para acceder a esta página.', 'Cerrar', { duration: 3000 });
+    alert('error: Debes iniciar sesión para acceder a esta página.');
+    router.navigate(['/reservar']);
+    return false;
+  }
 
   // Si la ruta requiere un rol específico, verifica si el rol del usuario coincide
   if (requiredRole) {
