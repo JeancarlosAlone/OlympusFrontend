@@ -209,9 +209,6 @@ onApprove: async (data: any) => {
   try {
     this.mensaje = 'Procesando pago...';
 
-    
-
-    // 🔹 Captura del pago
     const cap = await fetch(`${environment.apiUrl}/api/pagos/capturar-orden`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -227,7 +224,6 @@ onApprove: async (data: any) => {
       throw new Error('Error al capturar la orden');
     }
 
-    // ✅ Mostrar modal de éxito
     this.mostrarModalConMensaje('✅ Pago y factura generados correctamente.');
 
     console.log('Factura generada:', capJson.data?.facturaGenerada);
@@ -237,23 +233,13 @@ onApprove: async (data: any) => {
     this.registrarYRedirigir(esUsuario);  // Llamada al método que registra la reserva
     console.log('Pago registrado:', capJson.data?.nuevoPago);
 
-    // 🔹 Redirección después de confirmar pago
-    // 🔹 Redirección después de confirmar pago
-setTimeout(() => {
-  // Verificar si la URL de origen contiene olympusf.onrender.com/reservar
-  const isFromExternalReservar = window.location.href.includes('olympusf.onrender.com/reservar');
-  if (isFromExternalReservar) {
-    this.navigateHard('/reservar');
-  } else {
-    this.navigateHard('/SACH/habitaciones');
-  }
-}, 2500);
-
   } catch (err) {
     console.error('Error en proceso de pago:', err);
     this.mensaje = 'Error en PayPal';
     this.navigateHard('/login');
   }
+
+  
 },
     onError: (err: any) => {
       console.error(err);
