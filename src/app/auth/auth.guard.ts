@@ -1,7 +1,12 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+
+
+
+
+
 
 export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const token = localStorage.getItem('token');
@@ -26,8 +31,9 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   }
 
   // Decodificar el token para obtener el tipo de usuario
-  const decodedToken: any = jwt_decode(token);
-  const userType = decodedToken?.typeUser;
+    const decodedToken: any = jwtDecode(token);
+    const userType = decodedToken?.typeUser;
+
 
   // Verificar si el token es válido y si el rol es correcto
   const requiredRole = route.data['requiredRole'];  // Extrae el rol requerido para la ruta
