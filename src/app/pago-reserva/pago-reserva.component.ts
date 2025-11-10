@@ -56,7 +56,7 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
     }, 400);
   }
 
-  private async registrarYRedirigir(esUsuario: boolean) {
+private async registrarYRedirigir(esUsuario: boolean) {
   const reserva = this.reservaService.getReserva();
   if (!reserva || !reserva.habitacion || !reserva.cliente) {
     this.navigateHard(esUsuario ? '/SACH/habitaciones' : '/reservar');
@@ -75,7 +75,6 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
     fechaSalida: reserva.cliente.fechaFin,
     tipoRegistro: esUsuario ? 'manual' : 'enLinea',
     habitacionAsignada: { id_Rooms: reserva.habitacion.id_Rooms },
-
     serviciosSeleccionados: reserva.serviciosSeleccionados || []
   };
 
@@ -92,7 +91,7 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
         )
       );
     } catch {
-      console.warn('⚠ No se pudo actualizar el estado, pero se registró el huésped.');
+      console.warn('No se pudo actualizar el estado, pero se registró el huésped.');
     }
 
     this.mostrarModalConMensaje('✅ Reserva registrada con éxito.');
@@ -100,8 +99,8 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.reservaService.clearReserva();
 
-      // Verificar si la URL de la página actual contiene "/reservar"
-      const isFromReservar = window.location.href.includes('/reservar');
+      // Verificar si la URL de la página actual contiene '/reservar'
+      const isFromReservar = window.location.pathname.includes('/reservar');
       if (isFromReservar) {
         this.navigateHard('/reservar');  // Redirigir a la página de reserva
       } else {
