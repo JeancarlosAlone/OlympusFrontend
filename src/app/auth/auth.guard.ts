@@ -8,11 +8,24 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   const storedRole = localStorage.getItem('rol');
   const requiredRole = route.data['requiredRole'];  // Extrae el rol requerido para la ruta
 
-  const snackBar = inject(MatSnackBar);
   const router = inject(Router);
+  const snackBar = inject(MatSnackBar);
+
+  // --- Permitir rutas públicas o accesos desde el flujo externo (pago cliente)
+  // Marca de ruta pública (opcional): { data: { public: true } }
+  const isPublic = !!route.data?.['public'];
+  const path = route.routeConfig?.path || state.url || '';
+  const origenClienteQuery = route.queryParams && route.queryParams['origen'] === 'cliente';
+  // Si la app se cargó en el dominio externo con la ruta /reservar, permitimos acceder a pago-reserva
+  const fromOlympusExternalReservar = typeof window !== 'undefined' && window.location.href.includes('olympusf.onrender.com/reservar');
+
+  if (isPublic || path === 'pago-reserva' || origenClienteQuery || (fromOlympusExternalReservar && state.url?.includes('pago-reserva'))) {
+    return true;
+  }
 
   // Verifica si el token existe
   if (!token) {
+    // snackBar.open('Debes iniciar sesión para acceder a esta página.', 'Cerrar', { duration: 3000 });
     alert('error: Debes iniciar sesión para acceder a esta página.');
     router.navigate(['/reservar']);
     return false;
