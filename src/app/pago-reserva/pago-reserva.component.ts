@@ -57,58 +57,66 @@ export class PagoReservaComponent implements OnInit, AfterViewInit {
   }
 
   private async registrarYRedirigir(esUsuario: boolean) {
-    const reserva = this.reservaService.getReserva();
-    if (!reserva || !reserva.habitacion || !reserva.cliente) {
-      this.navigateHard(esUsuario ? '/SACH/habitaciones' : '/reservar');
-      return;
-    }
+  const reserva = this.reservaService.getReserva();
+  if (!reserva || !reserva.habitacion || !reserva.cliente) {
+    this.navigateHard(esUsuario ? '/SACH/habitaciones' : '/reservar');
+    return;
+  }
 
-    const idUser = localStorage.getItem('idUser');
-    const req: any = {
-      nameHuesped: reserva.cliente.nombre,
-      apellidoHuesped: reserva.cliente.apellido,
-      telefono: reserva.cliente.telefono,
-      numPersonas: reserva.cliente.numPersonas,
-      monto: reserva.total,
-      statusHuesped: 'pagado',
-      fechaRegistro: reserva.cliente.fechaInicio,
-      fechaSalida: reserva.cliente.fechaFin,
-      tipoRegistro: esUsuario ? 'manual' : 'enLinea',
-      habitacionAsignada: { id_Rooms: reserva.habitacion.id_Rooms },
+  const idUser = localStorage.getItem('idUser');
+  const req: any = {
+    nameHuesped: reserva.cliente.nombre,
+    apellidoHuesped: reserva.cliente.apellido,
+    telefono: reserva.cliente.telefono,
+    numPersonas: reserva.cliente.numPersonas,
+    monto: reserva.total,
+    statusHuesped: 'pagado',
+    fechaRegistro: reserva.cliente.fechaInicio,
+    fechaSalida: reserva.cliente.fechaFin,
+    tipoRegistro: esUsuario ? 'manual' : 'enLinea',
+    habitacionAsignada: { id_Rooms: reserva.habitacion.id_Rooms },
 
-      serviciosSeleccionados: reserva.serviciosSeleccionados || []
-    };
+    serviciosSeleccionados: reserva.serviciosSeleccionados || []
+  };
 
-    if (esUsuario && idUser) req.usuarioRegistrador = { id_users: String(idUser) };
+  if (esUsuario && idUser) req.usuarioRegistrador = { id_users: String(idUser) };
+
+  try {
+    await firstValueFrom(this.huespedService.createHuesped(req));
 
     try {
-      await firstValueFrom(this.huespedService.createHuesped(req));
-
-      try {
-        await firstValueFrom(
-          this.roomsService.changeStatus(
-            reserva.habitacion.id_Rooms,
-            TypesRoomsStatus.ocupada
-          )
-        );
-      } catch {
-        console.warn('⚠ No se pudo actualizar el estado, pero se registró el huésped.');
-      }
-
-      this.mostrarModalConMensaje('✅ Reserva registrada con éxito.');
-
-      setTimeout(() => {
-        this.reservaService.clearReserva();
-        this.navigateHard(esUsuario ? '/SACH/habitaciones' : '/reservar');
-      }, 3000);
-    } catch (err) {
-      console.error('Error al registrar huésped:', err);
-      this.mostrarModalConMensaje('Ocurrió un error al registrar la reserva.');
-      setTimeout(() => {
-        this.navigateHard(esUsuario ? '/SACH/habitaciones' : '/reservar');
-      }, 3000);
+      await firstValueFrom(
+        this.roomsService.changeStatus(
+          reserva.habitacion.id_Rooms,
+          TypesRoomsStatus.ocupada
+        )
+      );
+    } catch {
+      console.warn('⚠ No se pudo actualizar el estado, pero se registró el huésped.');
     }
+
+    this.mostrarModalConMensaje('✅ Reserva registrada con éxito.');
+
+    setTimeout(() => {
+      this.reservaService.clearReserva();
+
+      // Verificar si la URL de la página actual contiene "/reservar"
+      const isFromReservar = window.location.href.includes('/reservar');
+      if (isFromReservar) {
+        this.navigateHard('/reservar');  // Redirigir a la página de reserva
+      } else {
+        this.navigateHard('/SACH/habitaciones');  // Redirigir a las habitaciones en SACH
+      }
+    }, 3000);
+  } catch (err) {
+    console.error('Error al registrar huésped:', err);
+    this.mostrarModalConMensaje('Ocurrió un error al registrar la reserva.');
+    setTimeout(() => {
+      this.navigateHard(esUsuario ? '/SACH/habitaciones' : '/reservar');
+    }, 3000);
   }
+}
+
 
   ngOnInit(): void {
     const data = this.reservaService.getReserva();
