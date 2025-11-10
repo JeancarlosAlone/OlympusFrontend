@@ -1,7 +1,3 @@
-import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-
 export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const token = localStorage.getItem('token');
   const storedId = localStorage.getItem('idUser');
@@ -11,21 +7,21 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   const router = inject(Router);
   const snackBar = inject(MatSnackBar);
 
-  // --- Permitir rutas públicas o accesos desde el flujo externo (pago cliente)
-  // Marca de ruta pública (opcional): { data: { public: true } }
+  // Verifica si la ruta es pública o si está permitida por la query "origen=cliente"
   const isPublic = !!route.data?.['public'];
   const path = route.routeConfig?.path || state.url || '';
   const origenClienteQuery = route.queryParams && route.queryParams['origen'] === 'cliente';
-  // Si la app se cargó en el dominio externo con la ruta /reservar, permitimos acceder a pago-reserva
+  // Permitir acceder a la página de pago si se llega desde la página de reservas
   const fromOlympusExternalReservar = typeof window !== 'undefined' && window.location.href.includes('olympusf.onrender.com/reservar');
 
+  // Si es una página pública o proviene de un origen específico, permite el acceso
   if (isPublic || path === 'pago-reserva' || origenClienteQuery || (fromOlympusExternalReservar && state.url?.includes('pago-reserva'))) {
     return true;
   }
 
   // Verifica si el token existe
   if (!token) {
-    // snackBar.open('Debes iniciar sesión para acceder a esta página.', 'Cerrar', { duration: 3000 });
+    // SnackBar o alerta si no está autenticado
     alert('error: Debes iniciar sesión para acceder a esta página.');
     router.navigate(['/reservar']);
     return false;
